@@ -18,7 +18,7 @@ async def create_user(user: UserCreate, db: orm.Session = Depends(get_db)):
     db_user = await get_user_by_email(user.email, db)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already exists")
-    await create_user_obj(user, db)
+    user = await create_user_obj(user, db)
 
     return await create_token(user)
 
@@ -74,3 +74,8 @@ async def update_lead(
 ):
     await services.update_lead(lead_id, lead, user, db)
     return {"message", "Successfully Updated"}
+
+
+@app.get("/api")
+async def root():
+    return {"message": "Awesome Lead's Manager"}
