@@ -1,49 +1,42 @@
 import React, {useContext, useState} from "react";
-
-import {UserContext} from "../context/UserContext";
 import ErrorMessage from "./ErrorMessage";
+import {UserContext} from "../context/UserContext";
 
-const Register = () => {
+const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmationPassword, setconfirmationPassword] = useState("");
     const [errorMessage, seteErrorMessage] = useState("");
     const [, setToken] = useContext(UserContext);
 
-    const submitRegistration = async () => {
-        const requestOption = {
+    const submitLogin = async () => {
+        const requestOptions = {
             method: "POST",
             headers: {
-                "content-type": "application/json"
+                "content-type": "application/x-www-form-urlencoded"
             },
-            body: JSON.stringify({email: email, hashed_password: password}),
+            body: JSON.stringify(`grant_type=&username=${email}&password=${password}&scope=&client_id=&client_secret=`),
         };
 
-        const response = await fetch("/api/users", requestOption);
+        const response = await fetch("api/token", requestOptions);
         const data = await response.json()
 
         if (!response.ok) {
-            seteErrorMessage(data.detail);
+            seteErrorMessage(data.detail)
         } else {
-
             setToken(data.access_token);
         }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (password === confirmationPassword && password.length > 5) {
-            submitRegistration();
-        } else {
-            seteErrorMessage("Ensure that the passwords match and greater than 5 characters");
-        }
+        submitLogin();
 
     }
 
     return (
         <div className="column">
             <form className="box" onSubmit={handleSubmit}>
-                <h1 className="title has-text-centered">Register</h1>
+                <h1 className="title has-text-centered">Login</h1>
                 <div className="field">
                     <label className="label">Email Address</label>
                     <div className="control">
@@ -62,23 +55,13 @@ const Register = () => {
                     </div>
                 </div>
 
-                <div className="field">
-                    <label className="label">Confirm password</label>
-                    <div className="control">
-                        <input type="password" placeholder="Confirm password" value={confirmationPassword}
-                               onChange={(e) => setconfirmationPassword(e.target.value)}
-                               className="input" required/>
-                    </div>
-                </div>
                 <ErrorMessage message={errorMessage}/>
                 <br/>
-                <button className="button is-primary" type="submit">Register</button>
+                <button className="button is-primary" type="submit">Login</button>
 
             </form>
         </div>
-    );
-
-
+    )
 };
 
-export default Register;
+export default Login;

@@ -2,7 +2,7 @@ import React, {createContext, useEffect, useState} from "react";
 
 export const UserContext = createContext();
 
-export const UserProvider = (props) => {
+export const UserProvider = ({children}) => {
     const [token, setToken] = useState(localStorage.getItem("awesomeleadToken"));
 
     useEffect(() => {
@@ -26,7 +26,7 @@ export const UserProvider = (props) => {
     }, [token]);
     return (
         <UserContext.Provider value={[token, setToken]}>
-            {props.children}
+            {children}
         </UserContext.Provider>
     )
 }
